@@ -1,0 +1,137 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam packageStyle rectangle
+
+title Arhitectură Revizuită - MyDrinkShop (Corecții A03, A08, A10)
+
+' --- STRATUL MODEL (ENTITĂȚI) ---
+package "Model" {
+    enum CategorieBautura {
+        SUC
+        ALCOOL
+        CAFEA
+    }
+
+    enum TipBautura {
+        RECE
+        CALD
+    }
+
+    class Product {
+        - id: int
+        - nume: String
+        - pret: double
+        - categorie: CategorieBautura
+        - tip: TipBautura
+        - reteta: Reteta
+        + toString(): String
+    }
+
+    class IngredientReteta {
+        - denumire: String
+        - cantitate: double
+        + toString(): String
+    }
+
+    class Reteta {
+        - id: int
+        - ingrediente: List<IngredientReteta>
+        + toString(): String
+    }
+
+    class OrderItem {
+        - produs: Product
+        - cantitate: int
+        - pretLaMomentulVanzarii: double
+    }
+
+    class Order {
+        - id: int
+        - items: List<OrderItem>
+        - data: LocalDateTime
+        + computeTotal(): double
+    }
+}
+
+' --- STRATUL ACCES DATE (REPOSITORY) ---
+package "Persistence" {
+    interface Repository<ID, E> {
+        + findAll(): List<E>
+        + findOne(id: ID): E
+        + save(e: E): void
+        + delete(id: ID): void
+    }
+
+    abstract class FileAbstractRepository<ID, E> implements Repository {
+        - filePath: String
+        # loadData(): void
+        # saveData(): void
+    }
+
+    class FileProductRepository extends FileAbstractRepository
+    class FileOrderRepository extends FileAbstractRepository
+    class FileRetetaRepository extends FileAbstractRepository
+    
+    ' REPARARE A03: Adăugarea repository-ului pentru rapoarte zilnice
+    class FileReportRepository extends FileAbstractRepository {
+        + saveDailySummary(date: LocalDate, total: double): void
+    }
+}
+
+' --- STRATUL LOGICĂ BUSINESS (SERVICE) ---
+package "Service" {
+    class DrinkShopService {
+        - productRepo: FileProductRepository
+        - orderRepo: FileOrderRepository
+        - retetaRepo: FileRetetaRepository
+        - stocRepo: FileStocRepository
+        - reportRepo: FileReportRepository
+        + finalizeazaComanda(o: Order): void
+        + adaugaProdusNou(p: Product): void
+    }
+
+    class DailyReportService {
+        - reportRepo: FileReportRepository
+        + calculeazaTotalZi(data: LocalDate): double
+        + genereazaRaportCSV(data: LocalDate): void
+    }
+}
+
+' --- STRATUL INTERFAȚĂ (CONTROLLER) ---
+package "UI" {
+    ' REPARARE A08: Controller-ul nu mai deține liste de entități.
+    ' Acesta doar trimite comenzile către Service.
+    class DrinkShopController {
+        - service: DrinkShopService
+        - reportService: DailyReportService
+        + onAddProductClick(): void
+        + onFinishOrderClick(): void
+        + onGenerateReportClick(): void
+    }
+}
+
+' --- RELAȚII ȘI CORECȚII STRUCTURALE ---
+
+' REPARARE A10: Legătură directă între Produs și Rețetă
+Product "1" *-- "1" Reteta : are rețetă >
+
+Reteta "1" *-- "many" IngredientReteta : compusă din >
+Order "1" *-- "many" OrderItem : conține >
+OrderItem "many" o-- "1" Product : referă >
+
+' Fluxul de control (Layered Architecture)
+DrinkShopController --> DrinkShopService : deleagă logica
+DrinkShopService --> Repository : persistă datele
+
+note bottom of FileReportRepository
+  <b>Corecție A03:</b> Permite salvarea 
+  totalului zilei în fișiere text.
+end note
+
+note right of DrinkShopController
+  <b>Corecție A08:</b> S-au eliminat listele interne 
+  pentru a respecta Single Responsibility.
+end note
+
+@enduml
