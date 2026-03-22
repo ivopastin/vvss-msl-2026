@@ -1,0 +1,285 @@
+================================================================================
+VVSS - LAB02: Testare Black-Box (ECP & BVA) - Ghid Persoana 3
+================================================================================
+
+METODA TESTATA:
+  validate(Product product) din ProductValidator.java
+  Locatie: src/main/java/drinkshop/service/validator/ProductValidator.java
+
+PARAMETRI INVESTIGATI:
+  1. nume  (String) — conditie: nu poate fi null si nu poate fi blank
+  2. pret  (double) — conditie: trebuie sa fie > 0
+
+PARAMETRI NEINVESTIGATI (dummy, mereu valizi):
+  - id = 1
+  - categorie = CategorieBautura.JUICE
+  - tip = TipBautura.BASIC
+
+================================================================================
+PASUL 1 — Unde se creeaza fisierul de test
+================================================================================
+
+Creeaza fisierul la calea:
+  lab1/MyDrinkShop/src/test/java/drinkshop/service/validator/ProductValidatorTest.java
+
+================================================================================
+PASUL 2 — Codul complet al testelor
+================================================================================
+
+------------------------------------------------------------
+FISIER: ProductValidatorTest.java
+------------------------------------------------------------
+
+package drinkshop.service.validator;
+
+import drinkshop.domain.CategorieBautura;
+import drinkshop.domain.Product;
+import drinkshop.domain.TipBautura;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@DisplayName("ProductValidator - Teste ECP si BVA pentru 'nume' si 'pret'")
+class ProductValidatorTest {
+
+    private ProductValidator validator;
+
+    @BeforeEach
+    void setUp() {
+        validator = new ProductValidator();
+    }
+
+    // =========================================================================
+    // TESTE ECP (Equivalence Class Partitioning)
+    // =========================================================================
+
+    @Nested
+    @DisplayName("ECP Tests")
+    @Tag("ECP")
+    class ECPTests {
+
+        @Test
+        @DisplayName("TC1_ECP - Valid: nume non-blank, pret > 0 → succes")
+        void tc1_valid_numeNonBlank_pretPositiv() {
+            // Arrange
+            Product p = new Product(1, "Cola", 5.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertDoesNotThrow(() -> validator.validate(p));
+        }
+
+        @Test
+        @DisplayName("TC2_ECP - Non-valid: nume null → ValidationException")
+        void tc2_invalid_numeNull() {
+            // Arrange
+            Product p = new Product(1, null, 5.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            ValidationException ex = assertThrows(ValidationException.class,
+                    () -> validator.validate(p));
+            assertTrue(ex.getMessage().contains("Numele nu poate fi gol!"));
+        }
+
+        @Test
+        @DisplayName("TC3_ECP - Non-valid: nume blank (\"\") → ValidationException")
+        void tc3_invalid_numeBlank() {
+            // Arrange
+            Product p = new Product(1, "", 5.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            ValidationException ex = assertThrows(ValidationException.class,
+                    () -> validator.validate(p));
+            assertTrue(ex.getMessage().contains("Numele nu poate fi gol!"));
+        }
+
+        @Test
+        @DisplayName("TC4_ECP - Non-valid: pret = 0 → ValidationException")
+        void tc4_invalid_pretZero() {
+            // Arrange
+            Product p = new Product(1, "Cola", 0.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            ValidationException ex = assertThrows(ValidationException.class,
+                    () -> validator.validate(p));
+            assertTrue(ex.getMessage().contains("Pret invalid!"));
+        }
+
+        @Test
+        @DisplayName("TC5_ECP - Non-valid: pret < 0 → ValidationException")
+        void tc5_invalid_pretNegativ() {
+            // Arrange
+            Product p = new Product(1, "Cola", -3.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            ValidationException ex = assertThrows(ValidationException.class,
+                    () -> validator.validate(p));
+            assertTrue(ex.getMessage().contains("Pret invalid!"));
+        }
+    }
+
+    // =========================================================================
+    // TESTE BVA (Boundary Value Analysis)
+    // =========================================================================
+
+    @Nested
+    @DisplayName("BVA Tests - parametrul 'pret' (limita: pret > 0)")
+    @Tag("BVA")
+    class BVATestsPret {
+
+        @Test
+        @DisplayName("TC1_BVA - Non-valid: pret = 0.0 (exact pe granita) → ValidationException")
+        void tc1_bva_pret_exact_zero() {
+            // Arrange
+            Product p = new Product(1, "Cola", 0.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertThrows(ValidationException.class, () -> validator.validate(p));
+        }
+
+        @Test
+        @DisplayName("TC2_BVA - Non-valid: pret = -0.01 (sub granita) → ValidationException")
+        void tc2_bva_pret_sub_zero() {
+            // Arrange
+            Product p = new Product(1, "Cola", -0.01, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertThrows(ValidationException.class, () -> validator.validate(p));
+        }
+
+        @Test
+        @DisplayName("TC3_BVA - Valid: pret = 0.01 (imediat peste granita) → succes")
+        void tc3_bva_pret_peste_zero() {
+            // Arrange
+            Product p = new Product(1, "Cola", 0.01, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertDoesNotThrow(() -> validator.validate(p));
+        }
+
+        @Test
+        @DisplayName("TC4_BVA - Valid: pret = Double.MAX_VALUE (valoare maxima) → succes")
+        void tc4_bva_pret_maxim() {
+            // Arrange
+            Product p = new Product(1, "Cola", Double.MAX_VALUE, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertDoesNotThrow(() -> validator.validate(p));
+        }
+    }
+
+    @Nested
+    @DisplayName("BVA Tests - parametrul 'nume' (limita: nu poate fi blank)")
+    @Tag("BVA")
+    class BVATestsNume {
+
+        @Test
+        @DisplayName("TC5_BVA - Non-valid: nume = \"\" (lungime 0) → ValidationException")
+        void tc5_bva_nume_empty() {
+            // Arrange
+            Product p = new Product(1, "", 5.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertThrows(ValidationException.class, () -> validator.validate(p));
+        }
+
+        @Test
+        @DisplayName("TC6_BVA - Non-valid: nume = \" \" (spatiu, isBlank=true) → ValidationException")
+        void tc6_bva_nume_spatiu() {
+            // Arrange
+            Product p = new Product(1, " ", 5.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertThrows(ValidationException.class, () -> validator.validate(p));
+        }
+
+        @Test
+        @DisplayName("TC7_BVA - Valid: nume = \"A\" (lungime 1, non-blank) → succes")
+        void tc7_bva_nume_un_caracter() {
+            // Arrange
+            Product p = new Product(1, "A", 5.0, CategorieBautura.JUICE, TipBautura.BASIC);
+
+            // Act & Assert
+            assertDoesNotThrow(() -> validator.validate(p));
+        }
+    }
+
+    // =========================================================================
+    // TEST PARAMETRIZAT BONUS - demonstreaza @ParameterizedTest + @CsvSource
+    // =========================================================================
+
+    @ParameterizedTest(name = "Test parametrizat #{index}: nume=''{0}'', pret={1}, valid={2}")
+    @CsvSource({
+        "Cola,   5.0,  true",
+        "Cola,   0.0,  false",
+        "Cola,  -1.0,  false",
+        "A,      0.01, true"
+    })
+    @Tag("ECP")
+    @DisplayName("ECP parametrizat - combinatii nume/pret")
+    void ecp_parametrizat(String nume, double pret, boolean valid) {
+        // Arrange
+        Product p = new Product(1, nume.trim(), pret, CategorieBautura.JUICE, TipBautura.BASIC);
+
+        // Act & Assert
+        if (valid)
+            assertDoesNotThrow(() -> validator.validate(p));
+        else
+            assertThrows(ValidationException.class, () -> validator.validate(p));
+    }
+}
+
+================================================================================
+PASUL 3 — Adnotatii folosite (minim 3 distincte, altele decat cele interzise)
+================================================================================
+
+Adnotari utilizate in cod:
+  1. @DisplayName        — nume descriptiv pentru fiecare test
+  2. @Tag                — grupare teste pe categorii ("ECP", "BVA")
+  3. @Nested             — organizare teste in clase interioare
+  4. @ParameterizedTest  — test rulat cu mai multe seturi de date
+  5. @CsvSource          — sursa de date pentru @ParameterizedTest
+  6. @BeforeEach         — initializare validator inainte de fiecare test
+                          (aceasta este din lista "interzisa", dar cele de mai sus
+                           sunt suficiente pentru cerinta de 3 adnotari distincte)
+
+================================================================================
+PASUL 4 — Ce faci daca un test pica (bug identificat)
+================================================================================
+
+1. Notezi bug-ul in Lab02_BBT_TCs_Form.xlsx la sectiunea Statistics
+2. Depanezi codul din ProductValidator.java
+3. Re-rulezi TOATE testele (re-testare + testare de regresie)
+4. Notezi rezultatele finale in tabelul Statistics:
+   - Total teste rulate
+   - Teste passed
+   - Teste failed
+   - Nr. bug-uri identificate
+   - Bug-uri eliminate: DA/NU
+
+================================================================================
+PASUL 5 — Ce se pune pe Git
+================================================================================
+
+Structura de fisiere de adaugat in repository:
+  lab1/MyDrinkShop/src/test/java/drinkshop/service/validator/ProductValidatorTest.java
+  lab2/Lab02_BBT_TCs_Form.xlsx   (completat de persoana 2)
+  lab2/<fisier_testlink>.docx     (exportat de persoana 1 din TestLink)
+
+================================================================================
+REZUMAT ADNOTARI CERUTE vs FOLOSITE
+================================================================================
+
+Cerinta: cel putin 3 adnotari DIFERITE de @Before/AfterAll, @Before/AfterEach, @Test
+
+Folosite:
+  @DisplayName      ✓
+  @Tag              ✓
+  @Nested           ✓
+  @ParameterizedTest ✓
+  @CsvSource        ✓
+
+Cerinta indeplinita cu 5 adnotari distincte.
+
+================================================================================
