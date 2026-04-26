@@ -1,0 +1,150 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > CsvExporter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">drinkshop.export</a>
+</div>
+
+<h1>Coverage Summary for Class: CsvExporter (drinkshop.export)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CsvExporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package drinkshop.export;
+&nbsp;
+&nbsp;import drinkshop.domain.Order;
+&nbsp;import drinkshop.domain.OrderItem;
+&nbsp;import drinkshop.domain.Product;
+&nbsp;
+&nbsp;import java.io.FileWriter;
+&nbsp;import java.io.IOException;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class CsvExporter {</b>
+&nbsp;    public static void exportOrders(List&lt;Product&gt; products, List&lt;Order&gt; orders, String path) {
+<b class="nc">&nbsp;        try (FileWriter w = new FileWriter(path)) {</b>
+<b class="nc">&nbsp;            w.write(&quot;OrderId,Product,Quantity,Price\n&quot;);</b>
+<b class="nc">&nbsp;            double sum=0.0;</b>
+<b class="nc">&nbsp;            for (Order o : orders){</b>
+<b class="nc">&nbsp;                for (OrderItem i : o.getItems()) {</b>
+<b class="nc">&nbsp;                    Product p = products.stream().filter((p1)-&gt;i.getProduct().getId()==p1.getId()).toList().get(0);</b>
+<b class="nc">&nbsp;                    w.write(o.getId() + &quot;,&quot; + p.getNume() + &quot;,&quot; + i.getQuantity() + &quot;,&quot; + i.getTotal() + &quot;\n&quot;);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                w.write(&quot;total order: &quot;+o.getTotal()+&quot; RON\n&quot;);</b>
+<b class="nc">&nbsp;                w.write(&quot;-------------------------------\n&quot;);</b>
+<b class="nc">&nbsp;                sum+=o.getTotal();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            String date = LocalDate.now().format(DateTimeFormatter.ofPattern(&quot;dd.MM.yyyy&quot;));</b>
+<b class="nc">&nbsp;            w.write(&quot;TOTAL OF &quot;+date+&quot; is: &quot;+sum+&quot; RON\n&quot;);</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-20 23:58</div>
+</div>
+</body>
+</html>
