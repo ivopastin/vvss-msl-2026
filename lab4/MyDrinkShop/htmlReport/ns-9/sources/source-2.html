@@ -1,0 +1,375 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > DrinkShopController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">drinkshop.ui</a>
+</div>
+
+<h1>Coverage Summary for Class: DrinkShopController (drinkshop.ui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DrinkShopController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/107)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package drinkshop.ui;
+&nbsp;
+&nbsp;import drinkshop.domain.*;
+&nbsp;import drinkshop.service.DrinkShopService;
+&nbsp;import javafx.beans.property.SimpleStringProperty;
+&nbsp;import javafx.collections.FXCollections;
+&nbsp;import javafx.collections.ObservableList;
+&nbsp;import javafx.fxml.FXML;
+&nbsp;import javafx.scene.control.*;
+&nbsp;import javafx.scene.control.cell.PropertyValueFactory;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+<b class="nc">&nbsp;public class DrinkShopController {</b>
+&nbsp;
+&nbsp;    private DrinkShopService service;
+&nbsp;
+&nbsp;    // ---------- PRODUCT ----------
+&nbsp;    @FXML private TableView&lt;Product&gt; productTable;
+&nbsp;    @FXML private TableColumn&lt;Product, Integer&gt; colProdId;
+&nbsp;    @FXML private TableColumn&lt;Product, String&gt; colProdName;
+&nbsp;    @FXML private TableColumn&lt;Product, Double&gt; colProdPrice;
+&nbsp;    @FXML private TableColumn&lt;Product, CategorieBautura&gt; colProdCategorie;
+&nbsp;    @FXML private TableColumn&lt;Product, TipBautura&gt; colProdTip;
+&nbsp;    @FXML private TextField txtProdName, txtProdPrice;
+&nbsp;    @FXML private ComboBox&lt;CategorieBautura&gt; comboProdCategorie;
+&nbsp;    @FXML private ComboBox&lt;TipBautura&gt; comboProdTip;
+&nbsp;
+&nbsp;    // ---------- RETETE ----------
+&nbsp;    @FXML private TableView&lt;Reteta&gt; retetaTable;
+&nbsp;    @FXML private TableColumn&lt;Reteta, Integer&gt; colRetetaId;
+&nbsp;    @FXML private TableColumn&lt;Reteta, String&gt; colRetetaDesc;
+&nbsp;
+&nbsp;    @FXML private TableView&lt;IngredientReteta&gt; newRetetaTable;
+&nbsp;    @FXML private TableColumn&lt;IngredientReteta, String&gt; colNewIngredName;
+&nbsp;    @FXML private TableColumn&lt;IngredientReteta, Double&gt; colNewIngredCant;
+&nbsp;    @FXML private TextField txtNewIngredName, txtNewIngredCant;
+&nbsp;
+&nbsp;    // ---------- ORDER (CURRENT) ----------
+&nbsp;    @FXML private TableView&lt;OrderItem&gt; currentOrderTable;
+&nbsp;    @FXML private TableColumn&lt;OrderItem, String&gt; colOrderProdName;
+&nbsp;    @FXML private TableColumn&lt;OrderItem, Integer&gt; colOrderQty;
+&nbsp;
+&nbsp;    @FXML private ComboBox&lt;Integer&gt; comboQty;
+&nbsp;    @FXML private Label lblOrderTotal;
+&nbsp;    @FXML private TextArea txtReceipt;
+&nbsp;
+&nbsp;    @FXML private Label lblTotalRevenue;
+&nbsp;
+<b class="nc">&nbsp;    private ObservableList&lt;Product&gt; productList = FXCollections.observableArrayList();</b>
+<b class="nc">&nbsp;    private ObservableList&lt;Reteta&gt; retetaList = FXCollections.observableArrayList();</b>
+<b class="nc">&nbsp;    private ObservableList&lt;IngredientReteta&gt; newRetetaList = FXCollections.observableArrayList();</b>
+<b class="nc">&nbsp;    private ObservableList&lt;OrderItem&gt; currentOrderItems = FXCollections.observableArrayList();</b>
+&nbsp;
+<b class="nc">&nbsp;    private Order currentOrder = new Order(1);</b>
+&nbsp;
+&nbsp;    public void setService(DrinkShopService service) {
+<b class="nc">&nbsp;        this.service = service;</b>
+<b class="nc">&nbsp;        initData();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void initialize() {
+&nbsp;
+&nbsp;        // PRODUCTS
+<b class="nc">&nbsp;        colProdId.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;id&quot;));</b>
+<b class="nc">&nbsp;        colProdName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;nume&quot;));</b>
+<b class="nc">&nbsp;        colProdPrice.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;pret&quot;));</b>
+<b class="nc">&nbsp;        colProdCategorie.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;categorie&quot;));</b>
+<b class="nc">&nbsp;        colProdTip.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;tip&quot;));</b>
+<b class="nc">&nbsp;        productTable.setItems(productList);</b>
+&nbsp;
+<b class="nc">&nbsp;        comboProdCategorie.getItems().setAll(CategorieBautura.values());</b>
+<b class="nc">&nbsp;        comboProdTip.getItems().setAll(TipBautura.values());</b>
+&nbsp;
+&nbsp;        // RETETE
+<b class="nc">&nbsp;        colRetetaId.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;id&quot;));</b>
+<b class="nc">&nbsp;        colRetetaDesc.setCellValueFactory(data -&gt; {</b>
+<b class="nc">&nbsp;            Reteta r = data.getValue();</b>
+<b class="nc">&nbsp;            String desc = r.getIngrediente().stream()</b>
+<b class="nc">&nbsp;                    .map(i -&gt; i.getDenumire() + &quot; (&quot; + i.getCantitate() + &quot;)&quot;)</b>
+<b class="nc">&nbsp;                    .collect(Collectors.joining(&quot;, &quot;));</b>
+<b class="nc">&nbsp;            return new SimpleStringProperty(desc);</b>
+&nbsp;        });
+<b class="nc">&nbsp;        retetaTable.setItems(retetaList);</b>
+&nbsp;
+<b class="nc">&nbsp;        colNewIngredName.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;denumire&quot;));</b>
+<b class="nc">&nbsp;        colNewIngredCant.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;cantitate&quot;));</b>
+<b class="nc">&nbsp;        newRetetaTable.setItems(newRetetaList);</b>
+&nbsp;
+&nbsp;        // CURRENT ORDER TABLE
+<b class="nc">&nbsp;        colOrderProdName.setCellValueFactory(data -&gt; {</b>
+<b class="nc">&nbsp;            int prodId = data.getValue().getProduct().getId();</b>
+<b class="nc">&nbsp;            Product p = productList.stream().filter(pr -&gt; pr.getId() == prodId).findFirst().orElse(null);</b>
+<b class="nc">&nbsp;            return new SimpleStringProperty(p != null ? p.getNume() : &quot;N/A&quot;);</b>
+&nbsp;        });
+<b class="nc">&nbsp;        colOrderQty.setCellValueFactory(new PropertyValueFactory&lt;&gt;(&quot;quantity&quot;));</b>
+<b class="nc">&nbsp;        currentOrderTable.setItems(currentOrderItems);</b>
+&nbsp;
+<b class="nc">&nbsp;        comboQty.setItems(FXCollections.observableArrayList(1,2,3,4,5,6,7,8,9,10));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void initData() {
+<b class="nc">&nbsp;        productList.setAll(service.getAllProducts());</b>
+<b class="nc">&nbsp;        retetaList.setAll(service.getAllRetete());</b>
+<b class="nc">&nbsp;        lblTotalRevenue.setText(&quot;Daily Revenue: &quot; + service.getDailyRevenue());</b>
+<b class="nc">&nbsp;        updateOrderTotal();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // ---------- PRODUCT ----------
+&nbsp;    @FXML
+&nbsp;    private void onAddProduct() {
+<b class="nc">&nbsp;        Reteta r=retetaTable.getSelectionModel().getSelectedItem();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (r == null) {</b>
+<b class="nc">&nbsp;            Alert alert = new Alert(Alert.AlertType.INFORMATION);</b>
+<b class="nc">&nbsp;            alert.setTitle(&quot;Error&quot;);</b>
+<b class="nc">&nbsp;            alert.setHeaderText(&quot;Selectati o reteta pentru care adugati un produs&quot;);</b>
+<b class="nc">&nbsp;            alert.showAndWait();</b>
+&nbsp;            return;
+&nbsp;        }else
+<b class="nc">&nbsp;        if (service.getAllProducts().stream().filter(p-&gt;p.getId()==r.getId()).toList().size()&gt;0) {</b>
+<b class="nc">&nbsp;            Alert alert = new Alert(Alert.AlertType.WARNING);</b>
+<b class="nc">&nbsp;            alert.setTitle(&quot;Error&quot;);</b>
+<b class="nc">&nbsp;            alert.setHeaderText(&quot;Exista un produs cu reteta adaugata.&quot;);</b>
+<b class="nc">&nbsp;            alert.showAndWait();</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        Product p = new Product(r.getId(),</b>
+<b class="nc">&nbsp;                txtProdName.getText(),</b>
+<b class="nc">&nbsp;                Double.parseDouble(txtProdPrice.getText()),</b>
+<b class="nc">&nbsp;                comboProdCategorie.getValue(),</b>
+<b class="nc">&nbsp;                comboProdTip.getValue());</b>
+<b class="nc">&nbsp;        service.addProduct(p);</b>
+<b class="nc">&nbsp;        initData();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onUpdateProduct() {
+<b class="nc">&nbsp;        Product selected = productTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (selected == null) return;</b>
+<b class="nc">&nbsp;        service.updateProduct(selected.getId(), txtProdName.getText(),</b>
+<b class="nc">&nbsp;                Double.parseDouble(txtProdPrice.getText()),</b>
+<b class="nc">&nbsp;                comboProdCategorie.getValue(), comboProdTip.getValue());</b>
+<b class="nc">&nbsp;        initData();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onDeleteProduct() {
+<b class="nc">&nbsp;        Product selected = productTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (selected == null) return;</b>
+<b class="nc">&nbsp;        service.deleteProduct(selected.getId());</b>
+<b class="nc">&nbsp;        initData();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onFilterCategorie() {
+<b class="nc">&nbsp;        productList.setAll(service.filtreazaDupaCategorie(comboProdCategorie.getValue()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onFilterTip() {
+<b class="nc">&nbsp;        productList.setAll(service.filtreazaDupaTip(comboProdTip.getValue()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // ---------- RETETA NOUA ----------
+&nbsp;    @FXML
+&nbsp;    private void onAddNewIngred() {
+<b class="nc">&nbsp;        newRetetaList.add(new IngredientReteta(txtNewIngredName.getText(),</b>
+<b class="nc">&nbsp;                Double.parseDouble(txtNewIngredCant.getText())));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onDeleteNewIngred() {
+<b class="nc">&nbsp;        IngredientReteta sel = newRetetaTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (sel != null) newRetetaList.remove(sel);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onAddNewReteta() {
+<b class="nc">&nbsp;        Reteta r = new Reteta(service.getAllRetete().size()+1, new ArrayList&lt;&gt;(newRetetaList));</b>
+<b class="nc">&nbsp;        service.addReteta(r);</b>
+<b class="nc">&nbsp;        newRetetaList.clear();</b>
+<b class="nc">&nbsp;        initData();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onClearNewRetetaIngredients() {
+<b class="nc">&nbsp;        newRetetaTable.getItems().clear();</b>
+<b class="nc">&nbsp;        txtNewIngredName.clear();</b>
+<b class="nc">&nbsp;        txtNewIngredCant.clear();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // ---------- CURRENT ORDER ----------
+&nbsp;    @FXML
+&nbsp;    private void onAddOrderItem() {
+<b class="nc">&nbsp;        Product selected = productTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        Integer qty = comboQty.getValue();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (selected == null) {</b>
+<b class="nc">&nbsp;            showError(&quot;Selectează un produs din listă.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        if (qty == null) {</b>
+<b class="nc">&nbsp;            showError(&quot;Selectează cantitatea.&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        currentOrderItems.add(new OrderItem(selected, qty));</b>
+<b class="nc">&nbsp;        updateOrderTotal();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onDeleteOrderItem() {
+<b class="nc">&nbsp;        OrderItem sel = currentOrderTable.getSelectionModel().getSelectedItem();</b>
+<b class="nc">&nbsp;        if (sel != null) {</b>
+<b class="nc">&nbsp;            currentOrderItems.remove(sel);</b>
+<b class="nc">&nbsp;            updateOrderTotal();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onFinalizeOrder() {
+<b class="nc">&nbsp;        currentOrder.getItems().clear();</b>
+<b class="nc">&nbsp;        currentOrder.getItems().addAll(currentOrderItems);</b>
+<b class="nc">&nbsp;        currentOrder.computeTotalPrice();</b>
+&nbsp;
+<b class="nc">&nbsp;        service.addOrder(currentOrder);</b>
+<b class="nc">&nbsp;        txtReceipt.setText(service.generateReceipt(currentOrder));</b>
+&nbsp;
+<b class="nc">&nbsp;        currentOrderItems.clear();</b>
+<b class="nc">&nbsp;        currentOrder = new Order(currentOrder.getId() + 1);</b>
+<b class="nc">&nbsp;        updateOrderTotal();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void updateOrderTotal() {
+<b class="nc">&nbsp;        currentOrder.getItems().clear();</b>
+<b class="nc">&nbsp;        currentOrder.getItems().addAll(currentOrderItems);</b>
+<b class="nc">&nbsp;        double total = service.computeTotal(currentOrder);</b>
+<b class="nc">&nbsp;        lblOrderTotal.setText(&quot;Total: &quot; + total);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // ---------- EXPORT + REVENUE ----------
+&nbsp;    @FXML
+&nbsp;    private void onExportOrdersCsv() {
+<b class="nc">&nbsp;        service.exportCsv(&quot;orders.csv&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @FXML
+&nbsp;    private void onDailyRevenue() {
+<b class="nc">&nbsp;        lblTotalRevenue.setText(&quot;Daily Revenue: &quot; + service.getDailyRevenue());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void showError(String msg) {
+<b class="nc">&nbsp;        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);</b>
+<b class="nc">&nbsp;        alert.showAndWait();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-03-20 23:58</div>
+</div>
+</body>
+</html>

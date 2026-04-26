@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: drinkshop.service.StocServiceTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 5, Time elapsed: 0.014 s -- in drinkshop.service.StocServiceTest
