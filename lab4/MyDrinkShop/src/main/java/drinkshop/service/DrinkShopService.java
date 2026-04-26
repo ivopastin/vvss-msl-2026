@@ -24,6 +24,7 @@ public class DrinkShopService {
             Repository<Integer, Reteta> retetaRepo,
             Repository<Integer, Stoc> stocService, Validator<Stoc> stocValidator
     ) {
+
         this.productService = new ProductService(productRepo);
         this.orderService = new OrderService(orderRepo, productRepo, new OrderValidator());
         this.retetaService = new RetetaService(retetaRepo);
