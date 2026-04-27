@@ -17,13 +17,13 @@ public class OrderService {
     public OrderService(Repository<Integer, Order> orderRepo,
                         Repository<Integer, Product> productRepo,
                         Validator<Order> orderValidator) {
-        this.orderRepo      = orderRepo;
-        this.productRepo    = productRepo;
-        this.orderValidator = orderValidator;
+        this.orderRepo       = orderRepo;
+        this.productRepo     = productRepo;
+        this.orderValidator  = orderValidator;
     }
 
     public void addOrder(Order o) {
-        orderValidator.validate(o);
+        orderValidator.validate(o);   // <-- validare inainte de salvare
         orderRepo.save(o);
     }
 
@@ -36,8 +36,6 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders() {
-//        return StreamSupport.stream(orderRepo.findAll().spliterator(), false)
-//                .collect(Collectors.toList());
         return orderRepo.findAll();
     }
 
