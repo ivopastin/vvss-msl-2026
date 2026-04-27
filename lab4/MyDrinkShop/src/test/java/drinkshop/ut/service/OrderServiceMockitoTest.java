@@ -46,7 +46,7 @@ public class OrderServiceMockitoTest {
 
     // --- TEST 1: getAllOrders() cu assert + verify ---
     @Test
-    @Order(1)
+    @org.junit.jupiter.api.Order(1)
     void testGetAllValid() {
         Order order1 = mock(Order.class);
         Order order2 = mock(Order.class);
@@ -64,7 +64,7 @@ public class OrderServiceMockitoTest {
 
     // --- TEST 2: addOrder() cu comanda invalida --- assert + verify ---
     @Test
-    @Order(2)
+    @org.junit.jupiter.api.Order(2)
     void testAddOrderInvalid() {
         // simulam o comanda invalida: id <= 0
         when(order.getId()).thenReturn(-1);
@@ -85,7 +85,7 @@ public class OrderServiceMockitoTest {
 
     // --- TEST 3: addOrder() cu comanda valida --- fail + verify ---
     @Test
-    @Order(3)
+    @org.junit.jupiter.api.Order(3)
     void testAddOrderValid() {
         // simulam o comanda valida
         doNothing().when(orderValidator).validate(order);
@@ -105,7 +105,7 @@ public class OrderServiceMockitoTest {
 
     // --- TEST 4: deleteOrder() --- verify ---
     @Test
-    @Order(4)
+    @org.junit.jupiter.api.Order(4)
     void testDeleteOrder() {
         doNothing().when(orderRepo).delete(1);
 
