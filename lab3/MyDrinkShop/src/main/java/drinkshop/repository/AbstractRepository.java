@@ -17,8 +17,7 @@ public abstract class AbstractRepository<ID, E>
 
     @Override
     public List<E> findAll() {
-        return (List<E>)StreamSupport.stream(entities.values().spliterator(), false).toList();
-//                    .collect(Collectors.toList());
+        return (List<E>)StreamSupport.stream(entities.values().spliterator(), false).collect(java.util.stream.Collectors.toList());
         // return (List<E>) entities.values();
     }
 
