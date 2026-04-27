@@ -2,7 +2,7 @@
 VVSS - LAB04: Integration Testing cu Mockito - Ghid
 ================================================================================
 
-SCENARIUL ALES: (1) V <--- S ---> R  →  integrare top-down, BREADTH FIRST
+SCENARIUL ALES: (1) V <--- S ---> R  ->  integrare top-down, BREADTH FIRST
 
 MAPAREA E, V, R, S:
   E = Order           (drinkshop.domain.Order)

@@ -2,7 +2,7 @@
 VVSS - LAB04: Unit Testing cu Mockito - Ghid
 ================================================================================
 
-SCENARIUL ALES: (1) V <--- S ---> R  →  integrare top-down, BREADTH FIRST
+SCENARIUL ALES: (1) V <--- S ---> R  ->  integrare top-down, BREADTH FIRST
 
 MAPAREA E, V, R, S pe clasele din proiect:
   E = Order           (drinkshop.domain.Order)
@@ -28,23 +28,23 @@ EXPLICATII MOCKITO — SINTAXA FOLOSITA
 ================================================================================
 
 mock(Clasa.class)
-  → creeaza obiect fals; toate metodele returneaza null/0/false implicit
+  -> creeaza obiect fals; toate metodele returneaza null/0/false implicit
 
 when(mock.metoda()).thenReturn(valoare)
-  → "cand se apeleaza metoda, returneaza valoarea"
+  -> "cand se apeleaza metoda, returneaza valoarea"
 
 doThrow(new Exceptie()).when(mock).metoda(param)
-  → "cand se apeleaza metoda, arunca exceptia"
+  -> "cand se apeleaza metoda, arunca exceptia"
 
 doNothing().when(mock).metodaVoid(param)
-  → "cand se apeleaza metoda void, nu face nimic"
+  -> "cand se apeleaza metoda void, nu face nimic"
 
 verify(mock, times(n)).metoda()
-  → verifica ca metoda a fost apelata exact n ori
+  -> verifica ca metoda a fost apelata exact n ori
 
 verify(mock, never()).metoda()
-  → verifica ca metoda NU a fost apelata deloc
+  -> verifica ca metoda NU a fost apelata deloc
 
 verify(mock, never()).metoda(any())
-  → verifica ca metoda NU a fost apelata cu niciun argument
+  -> verifica ca metoda NU a fost apelata cu niciun argument
 
